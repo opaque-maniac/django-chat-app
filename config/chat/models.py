@@ -6,6 +6,12 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
     status = models.CharField(max_length=255, blank=True, null=True)
     
+    class Meta:
+        db_table = ''
+        managed = True
+        verbose_name = 'userprofile'
+        verbose_name_plural = 'userprofiles'
+    
     def __str__(self):
         return self.user.username
 
@@ -14,6 +20,12 @@ class GroupChat(models.Model):
     description = models.CharField(max_length=1000)
     participants = models.ManyToManyField(User, related_name='group_chats')
     group_picture = models.ImageField(upload_to="group_pic/", null=True, blank=True)
+    
+    class Meta:
+        db_table = ''
+        managed = True
+        verbose_name = 'groupchat'
+        verbose_name_plural = 'groupchats'
     
     def __str__(self):
         return self.name
@@ -25,6 +37,12 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to="chat_pics/", blank=True, null=True)
     attachments = models.FileField(upload_to="chat_files/", blank=True, null=True)
+    
+    class Meta:
+        db_table = ''
+        managed = True
+        verbose_name = 'message'
+        verbose_name_plural = 'messages'
     
     def __str__(self):
         return self.content[:50] + "..."
