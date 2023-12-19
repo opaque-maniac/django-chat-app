@@ -17,7 +17,6 @@
 {% endblock content %}
 {% block js %}
 <script>
-    // Use AJAX to check for new messages and show notifications
     function checkForNewMessages() {
       {% for conversation in conversations %}
         var conversationId = {{ conversation.id }};
@@ -27,7 +26,6 @@
           url: "{% url 'check_new_messages' conversation.id %}?last_message_timestamp=" + lastMessageTimestamp,
           success: function(data) {
             if (data.has_new_messages) {
-              // Show notification for the specific conversation
               showNotification(conversationId);
             }
           },
@@ -39,8 +37,6 @@
     setInterval(checkForNewMessages, 10000);
 
     function showNotification(conversationId) {
-      // Implement your notification logic here
-      // You might want to use a library or custom code to display notifications
       console.log('New message in conversation ' + conversationId);
       alert('New message in conversation ' + conversationId);
     }

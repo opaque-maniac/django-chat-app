@@ -25,7 +25,8 @@ def chats(request):
         else:
             last_message_timestamps[conversation.id] = None
 
-    return render(request, 'chat/all_chats.html', {'conversations': conversations, 'last_message_timestamps': last_message_timestamps})
+    context = { 'conversations': conversations, 'last_message_timestamps': last_message_timestamps }
+    return render(request, 'chat/all_chats.html', context)
 
 def check_new_messages(request, conversation_id):
     last_message_timestamp = request.GET.get('last_message_timestamp')

@@ -7,10 +7,17 @@
   <div id="chat-container">
     <div id="message-list">
       {% for message in messages %}
-        <div class="message">
-          <p>{{ message.content }}</p>
-          <small>{{ message.sender.username }} - {{ message.timestamp }}</small>
-        </div>
+        {% if message.sender == user %}
+            <div class="message sent-by-me">
+            <p>{{ message.content }}</p>
+            <small>{{ message.sender.username }} - {{ message.timestamp }}</small>
+            </div>
+        {% else %}
+            <div class="message sent-by-others">
+            <p>{{ message.content }}</p>
+            <small>{{ message.sender.username }} - {{ message.timestamp }}</small>
+            </div>
+        {% endif %
       {% endfor %}
     </div>
     <div id="new-message-form">
