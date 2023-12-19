@@ -1,0 +1,27 @@
+<!-- chat_template.html -->
+{% extends 'base.html' %}{% load static %}
+{% block meta %}{% endblock meta %}
+{% block css %}{% endblock css %}
+{% block title %}{{ recepient }}{% endblock title %}
+{% block content %}
+  <div id="chat-container">
+    <div id="message-list">
+      {% for message in messages %}
+        <div class="message">
+          <p>{{ message.content }}</p>
+          <small>{{ message.sender.username }} - {{ message.timestamp }}</small>
+        </div>
+      {% endfor %}
+    </div>
+    <div id="new-message-form">
+      <form id="message-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="button" onclick="sendMessage()">Send</button>
+      </form>
+    </div>
+  </div>
+{% endblock content %}
+{% block js %}
+  <script src="{% static 'chat/js/individual_chat.js' %}"></script>
+{% endblock js %}
