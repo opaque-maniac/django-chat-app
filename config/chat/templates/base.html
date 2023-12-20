@@ -9,11 +9,16 @@
     <title>{% block title %}{% endblock title %}|Chat</title>
 </head>
 <body>
+    <nav>
+        <a class="selected nav-button" id="chats" href="{% url 'all_chats' %}">All Chats</a>
+        <a class="nav-button" id="new" href="{% url 'new_chat' %}">New Chat</a>
+      </nav>
     <header></header>
     <div class="container">
         {% block content %}{% endblock content %}
     </div>
     <footer></footer>
+    <script src="{% static 'chat/js/base.js' %}"></script>
     {% block js %}{% endblock js %}
 </body>
 </html>

@@ -1,10 +1,13 @@
 <!-- all_chats_template.html -->
 {% extends 'base.html' %}{% load static %}
 {% block meta %}{% endblock meta %}
-{% block css %}{% endblock css %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'chat/css/all_chats.css' %}">
+{% endblock css %}
 {% block title %}{% endblock title %}
 {% block content %}
   <div id="all-chats-container">
+    <h1>All Chats</h1>
     {% for conversation in conversations %}
       <div class="conversation" data-conversation-id="{{ conversation.id }}">
         <h3>{{ conversation.id }}</h3>
@@ -13,6 +16,15 @@
     {% empty %}
         <p>No conversations found.</p>
     {% endfor %}
+  </div>
+  <div id="new-chat-container" class="hidden">
+    <form id="new-message-form" method="post" action="{% url 'chat:new_conversation' %}">
+      {% csrf_token %}
+      <input type="text" name="query" id="search" placeholder="Search user">
+    </form>
+    <div class="search_result" id="search_result">
+      <ul class="list-group" id="search_result">
+      </ul>
   </div>
 {% endblock content %}
 {% block js %}
@@ -33,12 +45,36 @@
       {% endfor %}
     }
 
-    // Update every 10 seconds (adjust as needed)
-    setInterval(checkForNewMessages, 10000);
+    // Update every 5 seconds (adjust as needed)
+    setInterval(checkForNewMessages, 5000);
 
     function showNotification(conversationId) {
       console.log('New message in conversation ' + conversationId);
       alert('New message in conversation ' + conversationId);
     }
+
+    function searchUser() {
+      $('#search').on('input', function () {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function () {
+            var search = $('#search').val();
+            if (search.length > 0) {
+                $.ajax({
+                    url: "{% url 'chat:search_user' %}",
+                    type: 'POST',
+                    data: {
+                        search: search
+                    },
+                    success: function (data) {
+                        $('#search_result').html(data.users);
+                    }
+                });
+            } else {
+                $('#search_result').html('');
+            }
+        }, 300); // Adjust the delay as needed (e.g., 300 milliseconds)
+    });
+  }
   </script>
+  <script src="{% static 'chat/js/all_chats.js' %}"></script>
 {% endblock js %}

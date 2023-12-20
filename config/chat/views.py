@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 
 from . import models
 from . import forms
+from accounts.models import CustomUser
 
 # View for the landing page
 def landing(request):
@@ -70,5 +72,34 @@ def send_message(request, conversation_id):
             return JsonResponse({'status': 'success'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Content cannot be empty'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+# View for new chat
+@login_required
+def new_chat(request, recepient_id):
+    recepient = CustomUser.objects.get(id=recepient_id)
+    conversation = models.Conversation.objects.create(
+        participitant=[request.user, recepient]
+    )
+    return redirect('chat:individual_chat', conversation.id)
+
+# View for creating a new conversation
+@login_required
+def new_chat(request):
+    if request.method == 'POST':
+        query = request.POST.get('query')
+        recepients = CustomUser.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)
+        ).exclude(id=request.user.id)
+        html = ""
+        for recepient in recepients:
+            if models.Conversation.objects.filter(participitant__in=[request.user, recepient]).count() == 0:
+                html += f'<li><a href="/chat/new/{recepient.id}">{recepient.username}</a></li>'
+            else:
+                html += f'<li><a href="/chat/chats/{models.Conversation.objects.get(participitant__in=[request.user, recepient]).id}">{recepient.username}</a></li>'
+        return JsonResponse({'users': html})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
